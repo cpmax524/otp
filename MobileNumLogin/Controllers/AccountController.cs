@@ -207,18 +207,17 @@ namespace MobileNumLogin.Controllers
 
             // Modified: Include hashed phone number in the external URL path
             var externalUrlWithHashedPhone = $"https://leedschat.xenosyslab.com/mobile:{Token}";
-            var externalUrl = Url.Action("ProxyExternalUrl", "Account", new { url = externalUrlWithHashedPhone }, Request.Scheme);
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return Json(new
                 {
                     success = true,
-                    proxyUrl = externalUrl // tell client to call proxy
+                    proxyUrl = externalUrlWithHashedPhone,
                 });
             }
 
-            return Redirect(externalUrl); // non-AJAX fallback (redirect to proxy)
+            return Redirect(externalUrlWithHashedPhone);
         }
 
 

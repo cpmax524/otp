@@ -78,16 +78,20 @@
         // Simulate API call
         fetch('/Account/VerifyOtp', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
             body: new URLSearchParams({ otpInput: otp })
         })
-            .then(res => {
-                if (res.redirected) {
-                    showToast('OTP verified successfully!', 'success');
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('OTP verified successfully! Redirecting...', 'success');
                     sessionStorage.clear();
-                    setTimeout(() => window.location.href = res.url, 1500);
+                    setTimeout(() => window.location.href = data.proxyUrl, 1500);
                 } else {
-                    showToast('Invalid OTP. Please try again.', 'error');
+                    showToast(data.message || 'Invalid OTP. Please try again.', 'error');
                     shakeOtpInputs();
                 }
             })
